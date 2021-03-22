@@ -1,0 +1,64 @@
+﻿@model IEnumerable<Silverbear1.Models.Product>
+
+@{
+    ViewData["Title"] = "Product List";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Products</h1>
+
+	<div class="search-box">
+		<p>Enter criteria here to limit the items displayed in the list below</p>
+		<p><label>Minimum memory GiB</label> <input class="numeric" type="text" data-bind="value: minMem"/></p>
+	</div>
+	
+	<table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Memory</th>
+                <th>Storage</th>
+                <th>USB</th>
+                <th>Graphics</th>
+                <th>CPU</th>
+                <th>Weight</th>
+                <th>Power</th>
+            </tr>
+        </thead>
+        <tbody data-bind="foreach: products">
+            <tr data-bind="visible: memoryInGiB >= $parent.minMem()">
+                <td data-bind="text: memory"></td>
+                <td data-bind="text: storage"></td>
+                <td data-bind="text: usb"></td>
+                <td data-bind="text: gpu"></td>
+                <td data-bind="text: cpu"></td>
+                <td data-bind="text: weight"></td>
+                <td data-bind="text: psu"></td>
+            </tr>
+        </tbody>
+    </table>
+    
+</div>
+
+@section Scripts {
+	<script>
+
+		var viewModel = {
+			products: ko.observableArray(),
+			minMem: ko.observable(0)
+		};
+
+		$(document).ready(function() {
+			$.ajax({
+				type: "GET",
+				url: "/Home/Products",
+			}).done(function(data) {
+				$(data).each(function(index, element) {
+					viewModel.products.push(element);
+				});
+				ko.applyBindings(viewModel);
+			});
+		});
+
+	</script>
+}
+
